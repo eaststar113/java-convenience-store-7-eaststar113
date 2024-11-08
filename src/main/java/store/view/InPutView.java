@@ -1,4 +1,4 @@
-package store;
+package store.view;
 
 import static store.InputMessage.NEXT_LINE;
 import static store.InputMessage.ORDER_MESSAGE;

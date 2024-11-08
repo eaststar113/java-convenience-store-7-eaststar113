@@ -1,4 +1,7 @@
-package store;
+package store.view;
+
+import store.Inventory;
+import store.Product;
 
 public class OutputView {
     public static void displayProducts(Inventory products) {
