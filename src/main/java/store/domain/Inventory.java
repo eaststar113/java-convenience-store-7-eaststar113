@@ -77,7 +77,7 @@ public class Inventory {
         }
     }
 
-    public Product checkOrderIsPromotion(String productName) {
+    public static Product checkOrderIsPromotion(String productName) {
         for (Product product : products) {
             if (productName.equals(product.getName()) && product.hasPromotion()) {
                 return product;
@@ -86,13 +86,37 @@ public class Inventory {
         return null;
     }
 
-    public Product checkOrderIsNoPromotion(String productName) {
+    public static Product checkOrderIsNoPromotion(String productName) {
         for (Product product : products) {
             if (productName.equals(product.getName()) && !product.hasPromotion()) {
                 return product;
             }
         }
         return null;
+    }
+
+    public static void decreasePromotionProduct(Product product, String productName,int quantity){
+        int rest = product.getQuantity() - quantity;
+        if(rest<0){
+            product.setQuantity(0);
+            Product nonPromotionProduct = checkOrderIsNoPromotion(productName);
+            int absoluteRest = -1 * rest;
+            Product.reduce(nonPromotionProduct,absoluteRest);
+            return ;
+        }
+        Product.reduce(product,quantity);
+    }
+
+    public static void decreaseNoPromotionProduct(String productName,int quantity){
+        Product nonPromotionProduct = checkOrderIsNoPromotion(productName);
+        int rest = nonPromotionProduct.getQuantity() - quantity;
+        if(rest<0){
+            nonPromotionProduct.setQuantity(0);
+            Product hasProduct = checkOrderIsPromotion(productName);
+            int absoluteRest = -1 * rest;
+            Product.reduce(hasProduct,absoluteRest);
+        }
+        Product.reduce(nonPromotionProduct,quantity);
     }
 
     public static List<Product> getProducts() {

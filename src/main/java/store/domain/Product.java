@@ -40,6 +40,12 @@ public class Product {
         quantity--;
     }
 
+    public static void reduce(Product product, int quantity) {
+        for(int i = 0;i<quantity;i++){
+            product.reduceQuantity();
+        }
+    }
+
     public String getPromotion() {
         return promotion;
     }

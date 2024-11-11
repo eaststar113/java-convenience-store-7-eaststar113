@@ -2,6 +2,8 @@ package store.service;
 
 import static store.constants.ConstantMessage.ANSWER_NO;
 import static store.constants.ConstantMessage.ANSWER_YES;
+import static store.domain.Inventory.checkOrderIsNoPromotion;
+import static store.domain.Inventory.checkOrderIsPromotion;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
@@ -26,16 +28,16 @@ public class PromotionService {
         updateProductList = new LinkedHashMap<>();
         receipt = new Receipt();
         updateProductAndCheckPromotion(order, promotions, inventory);
-        updateReceipt(inventory);
+        updateReceipt();
         updateBenefitProduct(order, promotions, inventory);
-        updateInventory(promotions,inventory);
+        updateInventory(promotions);
     }
 
     public void updateProductAndCheckPromotion(Order order, Promotions promotions, Inventory inventory) {
         Map<String, Integer> orderItems = order.getOrderItems();
         orderItems.forEach((productName, quantity) -> {
             updateProductList.put(productName, quantity);
-            Product product = inventory.checkOrderIsPromotion(productName);
+            Product product = checkOrderIsPromotion(productName);
 
             if (product == null) {
                 checkNoPromotionDiscount(productName,inventory);
@@ -52,7 +54,7 @@ public class PromotionService {
     }
 
     private void checkNoPromotionDiscount(String productName, Inventory inventory) {
-        Product noProduct = inventory.checkOrderIsNoPromotion(productName);
+        Product noProduct = checkOrderIsNoPromotion(productName);
         if (noProduct != null) {
             membershipDiscount += noProduct.getPrice() * noProduct.getQuantity();
         }
@@ -103,7 +105,7 @@ public class PromotionService {
 
     public void updateBenefitProduct(Order order, Promotions promotions, Inventory inventory){
         updateProductList.forEach((productName, quantity) -> {
-            Product product = inventory.checkOrderIsPromotion(productName);
+            Product product = checkOrderIsPromotion(productName);
             if(product != null){
                 String promotionName = product.getPromotion();
                 Promotion promotion = promotions.findPromotion(promotionName);
@@ -118,54 +120,24 @@ public class PromotionService {
         });
     }
 
-    public void updateInventory(Promotions promotions, Inventory inventory){
+    public void updateInventory(Promotions promotions){
         updateProductList.forEach((productName, quantity) -> {
-            Product product = inventory.checkOrderIsPromotion(productName);
+            Product product = checkOrderIsPromotion(productName);
             if(product != null){
                 String promotionName = product.getPromotion();
                 Promotion promotion = promotions.findPromotion(promotionName);
                 if(promotion.isPromotionActive(LocalDate.from(DateTimes.now()))){
-                    decreasePromotionProduct(product,inventory,productName,quantity);
+                    Inventory.decreasePromotionProduct(product,productName,quantity);
                 }
                 return ;
             }
-            decreaseNoPromotionProduct(inventory,productName,quantity);
+            Inventory.decreaseNoPromotionProduct(productName,quantity);
         });
     }
 
-    public void decreasePromotionProduct(Product product, Inventory inventory, String productName,int quantity){
-        int rest = product.getQuantity() - quantity;
-        if(rest<0){
-            product.setQuantity(0);
-            Product nonPromotionProduct = inventory.checkOrderIsNoPromotion(productName);
-            int absoluteRest = -1 * rest;
-            reduce(nonPromotionProduct,absoluteRest);
-            return ;
-        }
-        reduce(product,quantity);
-    }
-
-    public void decreaseNoPromotionProduct(Inventory inventory, String productName,int quantity){
-        Product nonPromotionProduct = inventory.checkOrderIsNoPromotion(productName);
-        int rest = nonPromotionProduct.getQuantity() - quantity;
-        if(rest<0){
-            nonPromotionProduct.setQuantity(0);
-            Product hasProduct = inventory.checkOrderIsPromotion(productName);
-            int absoluteRest = -1 * rest;
-            reduce(hasProduct,absoluteRest);
-        }
-        reduce(nonPromotionProduct,quantity);
-    }
-
-    public void reduce(Product product,int quantity) {
-        for(int i = 0;i<quantity;i++){
-            product.reduceQuantity();
-        }
-    }
-
-    public void updateReceipt(Inventory inventory) {
+    public void updateReceipt() {
         updateProductList.forEach((productName, quantity) -> {
-            Product product = inventory.checkOrderIsNoPromotion(productName);
+            Product product = checkOrderIsNoPromotion(productName);
             receipt.getList().put(product, quantity);
         });
     }
