@@ -64,7 +64,7 @@ public class PromotionService {
         String membershipAnswer = retryMembershipDiscount();
         if (ANSWER_YES.getMessage().equals(membershipAnswer)) {
             membershipDiscount *= 0.3;
-            receipt.setMembershipDiscount(membershipDiscount);
+            receipt.setMembershipDiscount(Math.min(membershipDiscount,8000));
         }
     }
 
