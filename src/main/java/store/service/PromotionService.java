@@ -24,23 +24,23 @@ public class PromotionService {
     Receipt receipt;
     int membershipDiscount = 0;
 
-    public PromotionService(Order order, Promotions promotions, Inventory inventory) {
+    public PromotionService(Order order, Promotions promotions) {
         updateProductList = new LinkedHashMap<>();
         receipt = new Receipt();
-        updateProductAndCheckPromotion(order, promotions, inventory);
+        updateProductAndCheckPromotion(order, promotions);
         updateReceipt();
-        updateBenefitProduct(order, promotions, inventory);
+        updateBenefitProduct(promotions);
         updateInventory(promotions);
     }
 
-    public void updateProductAndCheckPromotion(Order order, Promotions promotions, Inventory inventory) {
+    public void updateProductAndCheckPromotion(Order order, Promotions promotions) {
         Map<String, Integer> orderItems = order.getOrderItems();
         orderItems.forEach((productName, quantity) -> {
             updateProductList.put(productName, quantity);
             Product product = checkOrderIsPromotion(productName);
 
             if (product == null) {
-                checkNoPromotionDiscount(productName,inventory);
+                checkNoPromotionDiscount(productName);
                 return ;
             }
             String orderPromotionName = product.getPromotion();
@@ -53,7 +53,7 @@ public class PromotionService {
         calculateMembershipDiscount();
     }
 
-    private void checkNoPromotionDiscount(String productName, Inventory inventory) {
+    private void checkNoPromotionDiscount(String productName) {
         Product noProduct = checkOrderIsNoPromotion(productName);
         if (noProduct != null) {
             membershipDiscount += noProduct.getPrice() * noProduct.getQuantity();
@@ -97,13 +97,13 @@ public class PromotionService {
 
     private int calculateOutOfStockCount(Product product, Promotion promotion, int quantity) {
         int sum = promotion.getBuy() + promotion.getGet();
-        int stockMok = product.getQuantity() / sum;
-        int orderMok = quantity / sum;
-        int lessMok = Math.min(stockMok, orderMok);
-        return quantity - (lessMok * sum);
+        int stockShare = product.getQuantity() / sum;
+        int orderShare = quantity / sum;
+        int lessShare = Math.min(stockShare, orderShare);
+        return quantity - (lessShare * sum);
     }
 
-    public void updateBenefitProduct(Order order, Promotions promotions, Inventory inventory){
+    public void updateBenefitProduct(Promotions promotions){
         updateProductList.forEach((productName, quantity) -> {
             Product product = checkOrderIsPromotion(productName);
             if(product != null){
@@ -177,10 +177,10 @@ public class PromotionService {
 
     private String getOutOfStockStatus(Product product, Promotion promotion, int quantity) {
         int sum = promotion.getBuy() + promotion.getGet();
-        int stockMok = product.getQuantity() / sum;
-        int orderMok = quantity / sum;
-        int lessMok = Math.min(stockMok, orderMok);
-        int outOfStockCount = quantity - (lessMok * sum);
+        int stockShare = product.getQuantity() / sum;
+        int orderShare = quantity / sum;
+        int lessShare = Math.min(stockShare, orderShare);
+        int outOfStockCount = quantity - (lessShare * sum);
         if (outOfStockCount == 0) {
             return null;
         }

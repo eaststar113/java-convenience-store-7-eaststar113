@@ -19,7 +19,7 @@ public class StoreController {
         do{
             OutputView.displayProducts(inventory);
             Order order = retryOrder();
-            PromotionService promotionService = new PromotionService(order,promotions,inventory);
+            PromotionService promotionService = new PromotionService(order,promotions);
             OutputView.displayReceipt(promotionService.getReceipt());
         }while(Objects.equals(reOrder(), ANSWER_YES.getMessage()));
     }
