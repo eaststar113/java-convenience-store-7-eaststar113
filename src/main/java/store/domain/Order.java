@@ -1,5 +1,8 @@
 package store.domain;
 
+import static store.constants.ErrorMessage.INVALID_FORMAT;
+import static store.constants.ErrorMessage.ORDER_IS_EMPTY;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,7 @@ public class Order {
 
     private static void isOrderEmpty(String order) {
         if(order == null || order.isEmpty()){
-            throw new IllegalArgumentException("[ERROR] 입력값이 비어있습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(ORDER_IS_EMPTY.getMessage());
         }
     }
 
@@ -40,7 +43,7 @@ public class Order {
         List<String> list = List.of(order.split(",", -1));
         for (String item : list) {
             if (!isValidOrder(item.trim())) {
-                throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+                throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
             }
         }
     }
@@ -69,19 +72,19 @@ public class Order {
 
     private static void beWrappedInParentheses(String item) {
         if(!(item.startsWith("[") && item.endsWith("]"))){
-            throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
         }
     }
 
     private static void checkSizeSplitWithDash(List<String> parts) {
         if (parts.size() != 2) {
-            throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
         }
     }
 
     private static void isEmptyProductName(String productName) {
         if(productName.isEmpty()){
-            throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
         }
     }
 
@@ -89,10 +92,10 @@ public class Order {
         try {
             int quantity = Integer.parseInt(quantityStr);
             if (quantity < 1) {
-                throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+                throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
             }
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
         }
     }
 

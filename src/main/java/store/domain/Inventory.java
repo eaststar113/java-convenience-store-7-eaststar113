@@ -1,5 +1,8 @@
 package store.domain;
 
+import static store.constants.ErrorMessage.PRODUCT_DOESNT_EXIST;
+import static store.constants.ErrorMessage.QUANTITY_OVER_PRODUCT_QUANTITY;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -57,7 +60,7 @@ public class Inventory {
             }
         }
         if (!productFound) {
-            throw new IllegalArgumentException("[ERROR] 상품명이 목록에 존재하지 않습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(PRODUCT_DOESNT_EXIST.getMessage());
         }
     }
 
@@ -70,7 +73,7 @@ public class Inventory {
             }
         }
         if (quantity > sumCount) {
-            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
+            throw new IllegalArgumentException(QUANTITY_OVER_PRODUCT_QUANTITY.getMessage());
         }
     }
 
