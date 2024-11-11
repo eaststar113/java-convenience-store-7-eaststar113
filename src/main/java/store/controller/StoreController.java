@@ -18,8 +18,8 @@ public class StoreController {
             OutputView.displayProducts(inventory);
 
             Order order = retryOrder();
-            PromotionStockAlertService psaservice = new PromotionStockAlertService(order,promotions,inventory);
-            OutputView.displayReceipt(psaservice.getReceipt());
+            PromotionStockAlertService promotionStockAlertService = new PromotionStockAlertService(order,promotions,inventory);
+            OutputView.displayReceipt(promotionStockAlertService.getReceipt());
         }while(Objects.equals(reOrder(), "Y"));
     }
 
