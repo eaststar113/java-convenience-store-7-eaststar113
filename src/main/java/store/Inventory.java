@@ -28,7 +28,7 @@ public class Inventory {
         }
     }
 
-    private List<String> getNextLine(List<String> lines, int i){
+    private List<String> getNextLine(List<String> lines, int i) {
         String line = lines.get(i);
         return Arrays.asList(line.split(","));
     }
@@ -75,11 +75,28 @@ public class Inventory {
                 sumCount += product.getQuantity();
             }
         }
-        if(quantity > sumCount){
-            throw new IllegalArgumentException("[ERROR] 재고 수량이 부족합니다. 다시 입력해 주세요.");
+        if (quantity > sumCount) {
+            throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
         }
     }
 
+    public Product checkOrderIsPromotion(String productName) {
+        for (Product product : products) {
+            if (productName.equals(product.getName()) && product.hasPromotion()) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    public Product checkOrderIsNoPromotion(String productName) {
+        for (Product product : products) {
+            if (productName.equals(product.getName()) && !product.hasPromotion()) {
+                return product;
+            }
+        }
+        return null;
+    }
 
     public static List<Product> getProducts() {
         return products;
