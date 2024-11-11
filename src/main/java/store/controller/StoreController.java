@@ -1,9 +1,12 @@
-package store;
+package store.controller;
 
 import java.io.IOException;
 import java.util.Objects;
+import store.util.Validate;
+import store.domain.Inventory;
 import store.domain.Order;
 import store.domain.Promotions;
+import store.service.PromotionStockAlertService;
 import store.view.InPutView;
 import store.view.OutputView;
 
@@ -16,7 +19,7 @@ public class StoreController {
 
             Order order = retryOrder();
             PromotionStockAlertService psaservice = new PromotionStockAlertService(order,promotions,inventory);
-            OutputView.displayReceipt(psaservice.receipt);
+            OutputView.displayReceipt(psaservice.getReceipt());
         }while(Objects.equals(reOrder(), "Y"));
     }
 
