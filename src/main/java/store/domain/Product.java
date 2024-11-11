@@ -1,4 +1,4 @@
-package store;
+package store.domain;
 
 public class Product {
     private final String name;

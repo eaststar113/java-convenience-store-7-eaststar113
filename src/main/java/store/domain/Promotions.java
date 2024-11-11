@@ -1,13 +1,12 @@
-package store;
+package store.domain;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import store.domain.Promotion;
+import store.util.Parser;
 
 public class Promotions {
 
@@ -21,14 +20,9 @@ public class Promotions {
     public void loadPromotions(String filePath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         for (int i = 1; i < lines.size(); i++) {
-            List<String> fields = getNextLine(lines, i);
+            List<String> fields = Parser.getNextLine(lines, i);
             promotions.add(createPromotion(fields));
         }
-    }
-
-    private List<String> getNextLine(List<String> lines, int i){
-        String line = lines.get(i);
-        return Arrays.asList(line.split(","));
     }
 
     private Promotion createPromotion(List<String> fields) {
