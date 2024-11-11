@@ -40,6 +40,15 @@ public class Promotions {
         return new Promotion(name, buy, get, startDate, endDate);
     }
 
+    public Promotion findPromotion(String promotionName){
+        for(Promotion promotion : promotions){
+            if(promotionName!=null&&promotionName.equals(promotion.getName())){
+                return promotion;
+            }
+        }
+        return null;
+    }
+
     public static List<Promotion> getPromotions() {
         return promotions;
     }
