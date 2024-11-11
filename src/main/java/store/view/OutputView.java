@@ -1,15 +1,27 @@
 package store.view;
 
+import static store.constants.OutputMessage.BENEFIT_MESSAGE;
+import static store.constants.OutputMessage.CATEGORY_MESSAGE;
+import static store.constants.OutputMessage.DISCOUNT_PRICE_MESSAGE;
+import static store.constants.OutputMessage.DISTINCT_LINE_MESSAGE;
+import static store.constants.OutputMessage.INTRODUCE_PRODUCT_MESSAGE;
+import static store.constants.OutputMessage.MEMBERSHIP_PRICE_MESSAGE;
+import static store.constants.OutputMessage.NEXT_LINE;
+import static store.constants.OutputMessage.STORE_MESSAGE;
+import static store.constants.OutputMessage.TOTAL_PRICE_MESSAGE;
+import static store.constants.OutputMessage.WELCOME_MESSAGE;
+import static store.constants.OutputMessage.YOU_PAY_PRICE_MESSAGE;
+
 import java.util.Map;
-import store.Inventory;
-import store.Product;
-import store.Receipt;
+import store.domain.Inventory;
+import store.domain.Product;
+import store.domain.Receipt;
 
 public class OutputView {
 
     public static void displayProducts(Inventory products) {
-        System.out.println("안녕하세요. W편의점입니다.");
-        System.out.println("현재 보유하고 있는 상품입니다.\n");
+        System.out.println(NEXT_LINE.getMessage()+WELCOME_MESSAGE.getMessage());
+        System.out.println(INTRODUCE_PRODUCT_MESSAGE.getMessage()+NEXT_LINE.getMessage());
 
         for (Product product : Inventory.getProducts()) {
             System.out.println(product);
@@ -17,13 +29,13 @@ public class OutputView {
     }
 
     public static void displayReceipt(Receipt receipt) {
-        System.out.println("==============W 편의점================");
-        System.out.println("상품명\t\t수량\t금액");
+        System.out.println(NEXT_LINE.getMessage()+STORE_MESSAGE.getMessage());
+        System.out.println(CATEGORY_MESSAGE.getMessage());
 
         printProductItems(receipt);
-        System.out.println("=============증\t정===============");
+        System.out.println(BENEFIT_MESSAGE.getMessage());
         printBenefitItems(receipt);
-        System.out.println("====================================");
+        System.out.println(DISTINCT_LINE_MESSAGE.getMessage());
         printPriceInfo(receipt);
     }
 
@@ -37,33 +49,33 @@ public class OutputView {
         for (Map.Entry<Product, Integer> product : receipt.getList().entrySet()) {
             String name = product.getKey().getName();
             int price = product.getKey().getPrice();
-            int su = product.getValue();
-            System.out.println(name + "\t\t" + su + "\t" + String.format("%,d", price * su));
+            int count = product.getValue();
+            System.out.println(name + "\t\t\t" + count + "\t" + String.format("%,d", price * count));
         }
     }
 
     private static void printBenefitItems(Receipt receipt) {
         for (Map.Entry<Product, Integer> product : receipt.getOnePlusOne().entrySet()) {
             String name = product.getKey().getName();
-            int su = product.getValue();
-            System.out.println(name+"\t"+"\t"+su+"\t");
+            int count = product.getValue();
+            System.out.println(name+"\t\t"+"\t"+count+"\t");
         }
     }
 
     private static void printTotalPrice(Receipt receipt) {
-        int suSum = receipt.calculateTotalQuantity();
+        int countSum = receipt.calculateTotalQuantity();
         int price = receipt.calculateTotalPrice();
-        System.out.println("총구매액\t\t" + suSum + "\t" + String.format("%,d", price));
+        System.out.println(TOTAL_PRICE_MESSAGE.format(countSum,price));
     }
 
     private static void printDiscountPrice(Receipt receipt) {
         int discountPrice = receipt.calculateDiscountPrice();
-        System.out.println("행사할인\t\t\t\t" + "-" + String.format("%,d", discountPrice));
-        System.out.println("멤버십 할인\t\t\t\t" + "-" + String.format("%,d", receipt.getMembershipDiscount()));
+        System.out.println(DISCOUNT_PRICE_MESSAGE.format(discountPrice));
+        System.out.println(MEMBERSHIP_PRICE_MESSAGE.format(receipt.getMembershipDiscount()));
     }
 
     private static void printFinalPrice(Receipt receipt) {
         int finalPrice = receipt.calculateFinalPrice();
-        System.out.println("내실돈\t\t\t\t" + String.format("%,d", finalPrice));
+        System.out.println(YOU_PAY_PRICE_MESSAGE.format(finalPrice));
     }
 }
