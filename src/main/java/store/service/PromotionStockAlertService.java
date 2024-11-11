@@ -1,9 +1,11 @@
-package store;
+package store.service;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import store.util.Validate;
+import store.domain.Inventory;
 import store.domain.Order;
 import store.domain.Product;
 import store.domain.Promotion;
@@ -164,7 +166,7 @@ public class PromotionStockAlertService {
     public void updateReceipt(Inventory inventory) {
         updateProductList.forEach((productName, quantity) -> {
             Product product = inventory.checkOrderIsNoPromotion(productName);
-            receipt.orderList.put(product, quantity);
+            receipt.getList().put(product, quantity);
         });
     }
 
@@ -224,5 +226,9 @@ public class PromotionStockAlertService {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public Receipt getReceipt() {
+        return receipt;
     }
 }
