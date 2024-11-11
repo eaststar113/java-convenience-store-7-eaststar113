@@ -29,6 +29,10 @@ public class Product {
         return quantity;
     }
 
+    public String getPromotion() {
+        return promotion;
+    }
+
     public boolean hasPromotion() {
         return !(promotion.isEmpty());
     }
