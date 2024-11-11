@@ -1,7 +1,7 @@
 package store;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +10,7 @@ public class Order {
     private Map<String, Integer> orderItems;
 
     public Order(String order) {
-        this.orderItems = new HashMap<>();
+        this.orderItems = new LinkedHashMap<>();
         validate(order);
         parseOrder(order);
     }
@@ -95,5 +95,9 @@ public class Order {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.(수량 자연수놉)");
         }
+    }
+
+    public Map<String, Integer> getOrderItems() {
+        return orderItems;
     }
 }
