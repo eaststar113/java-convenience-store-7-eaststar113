@@ -1,4 +1,4 @@
-package store;
+package store.constants;
 
 public enum InputMessage {
     NEXT_LINE("\n"),

@@ -25,8 +25,16 @@ public class Product {
         return price;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public int getQuantity() {
         return quantity;
+    }
+
+    public void reduceQuantity() {
+        quantity--;
     }
 
     public String getPromotion() {
@@ -35,10 +43,6 @@ public class Product {
 
     public boolean hasPromotion() {
         return !(promotion.isEmpty());
-    }
-
-    public boolean isOutOfStock() {
-        return quantity == 0;
     }
 
     @Override

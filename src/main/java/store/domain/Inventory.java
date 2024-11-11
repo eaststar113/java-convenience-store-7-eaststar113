@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import store.domain.Product;
+import store.util.Parser;
 
 public class Inventory {
 
@@ -19,7 +21,7 @@ public class Inventory {
     public void loadProducts(String filePath) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(filePath));
         for (int i = 1; i < lines.size(); i++) {
-            List<String> fields = getNextLine(lines, i);
+            List<String> fields = Parser.getNextLine(lines, i);
             String name = fields.getFirst();
             if (!products.isEmpty()) {
                 checkAndAddOutOfStockProduct(name);
@@ -28,12 +30,6 @@ public class Inventory {
         }
     }
 
-    private List<String> getNextLine(List<String> lines, int i) {
-        String line = lines.get(i);
-        return Arrays.asList(line.split(","));
-    }
-
-    //확장성고려
     private Product createProduct(List<String> fields) {
         String name = fields.get(0);
         int price = Integer.parseInt(fields.get(1));

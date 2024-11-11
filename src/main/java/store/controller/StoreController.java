@@ -1,6 +1,9 @@
 package store;
 
 import java.io.IOException;
+import java.util.Objects;
+import store.domain.Order;
+import store.domain.Promotions;
 import store.view.InPutView;
 import store.view.OutputView;
 
@@ -8,11 +11,25 @@ public class StoreController {
     public static void run(){
         Inventory inventory = displayInventory();
         Promotions promotions = displayPromotion();
-        OutputView.displayProducts(inventory);
+        do{
+            OutputView.displayProducts(inventory);
 
-        Order order = retryOrder();
-        PromotionStockAlertService psaservice = new PromotionStockAlertService(order,promotions,inventory);
-        OutputView.displayReceipt(psaservice.receipt);
+            Order order = retryOrder();
+            PromotionStockAlertService psaservice = new PromotionStockAlertService(order,promotions,inventory);
+            OutputView.displayReceipt(psaservice.receipt);
+        }while(Objects.equals(reOrder(), "Y"));
+    }
+
+    public static String reOrder() {
+        while (true) {
+            try {
+                String ans = InPutView.printReorderMessage();
+                ans = Validate.validate(ans);
+                return ans;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     public static Inventory displayInventory() {
@@ -34,7 +51,7 @@ public class StoreController {
     public static Order retryOrder() {
         while(true){
             try {
-                return new Order(InPutView.getOrder());
+                return new Order(InPutView.printOrderMessage());
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
             }
