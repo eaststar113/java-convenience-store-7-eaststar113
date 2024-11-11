@@ -1,5 +1,7 @@
 package store.domain;
 
+import static store.constants.ConstantMessage.REGEX_COMMA;
+import static store.constants.ConstantMessage.REGEX_DASH;
 import static store.constants.ErrorMessage.INVALID_FORMAT;
 import static store.constants.ErrorMessage.ORDER_IS_EMPTY;
 
@@ -23,10 +25,10 @@ public class Order {
     }
 
     private void parseOrder(String order) {
-        List<String> items = List.of(order.split(","));
+        List<String> items = List.of(order.split(REGEX_COMMA.getMessage()));
         for (String item : items) {
             String content = item.replaceAll("[\\[\\]]", "").trim();
-            List<String> parts = List.of(content.split("-"));
+            List<String> parts = List.of(content.split(REGEX_DASH.getMessage()));
             String productName = parts.get(0).trim();
             int quantity = Integer.parseInt(parts.get(1).trim());
             orderItems.put(productName, quantity);
@@ -40,7 +42,7 @@ public class Order {
     }
 
     private static void isValidFormat(String order) {
-        List<String> list = List.of(order.split(",", -1));
+        List<String> list = List.of(order.split(REGEX_COMMA.getMessage(), -1));
         for (String item : list) {
             if (!isValidOrder(item.trim())) {
                 throw new IllegalArgumentException(INVALID_FORMAT.getMessage());
@@ -51,7 +53,7 @@ public class Order {
     private static boolean isValidOrder(String item) {
         beWrappedInParentheses(item);
         String content = item.replaceAll("[\\[\\]]", "");
-        List<String> parts = List.of(content.split("-"));
+        List<String> parts = List.of(content.split(REGEX_DASH.getMessage()));
         checkSizeSplitWithDash(parts);
         checkAboutProductName(parts.get(0).trim());
         checkAboutProductQuantity(parts.get(0).trim(),parts.get(1).trim());

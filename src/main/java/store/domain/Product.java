@@ -1,5 +1,8 @@
 package store.domain;
 
+import static store.constants.ConstantMessage.EMPTY_STORAGE;
+import static store.constants.ConstantMessage.PER_WON;
+
 public class Product {
     private final String name;
     private final int price;
@@ -48,7 +51,7 @@ public class Product {
     @Override
     public String toString() {
         String promotionText = "";
-        String quantityText = "재고 없음";
+        String quantityText = EMPTY_STORAGE.getMessage();
         if(promotion != null){
             promotionText = " " + promotion;
         }
@@ -56,6 +59,6 @@ public class Product {
             quantityText = quantity + "개";
         }
         String formattedPrice = String.format("%,d", price);
-        return "- " + name + " " + formattedPrice + "원 " + quantityText + promotionText;
+        return "- " + name + " " + formattedPrice + PER_WON.getMessage() + quantityText + promotionText;
     }
 }

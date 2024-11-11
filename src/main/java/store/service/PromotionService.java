@@ -1,5 +1,8 @@
 package store.service;
 
+import static store.constants.ConstantMessage.ANSWER_NO;
+import static store.constants.ConstantMessage.ANSWER_YES;
+
 import camp.nextstep.edu.missionutils.DateTimes;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -13,13 +16,13 @@ import store.domain.Promotions;
 import store.domain.Receipt;
 import store.view.InPutView;
 
-public class PromotionStockAlertService {
+public class PromotionService {
 
     Map<String, Integer> updateProductList;
     Receipt receipt;
     int membershipDiscount = 0;
 
-    public PromotionStockAlertService(Order order, Promotions promotions, Inventory inventory) {
+    public PromotionService(Order order, Promotions promotions, Inventory inventory) {
         updateProductList = new LinkedHashMap<>();
         receipt = new Receipt();
         updateProductAndCheckPromotion(order, promotions, inventory);
@@ -48,7 +51,6 @@ public class PromotionStockAlertService {
         calculateMembershipDiscount();
     }
 
-
     private void checkNoPromotionDiscount(String productName, Inventory inventory) {
         Product noProduct = inventory.checkOrderIsNoPromotion(productName);
         if (noProduct != null) {
@@ -58,36 +60,36 @@ public class PromotionStockAlertService {
 
     private void calculateMembershipDiscount() {
         String membershipAnswer = retryMembershipDiscount();
-        if ("Y".equals(membershipAnswer)) {
+        if (ANSWER_YES.getMessage().equals(membershipAnswer)) {
             membershipDiscount *= 0.3;
             receipt.setMembershipDiscount(membershipDiscount);
         }
     }
 
     private void checkPromotionCondition(Product product, Promotion promotion, int quantity,
-                                          Map<String, Integer> imsi) {
+                                          Map<String, Integer> updateProductList) {
         if (checkOrderPromotionBenefit(product, promotion, quantity)) {
             String benefitAnswer = retryCheckBenefit(product);
-            if ("Y".equals(benefitAnswer)) {
-                canGetOneBenefit(product, quantity, imsi);
+            if (ANSWER_YES.getMessage().equals(benefitAnswer)) {
+                canGetOneBenefit(product, quantity, updateProductList);
             }
             return;
         }
-        checkPromotionOutOfStock(product, promotion, quantity, imsi);
+        checkPromotionOutOfStock(product, promotion, quantity, updateProductList);
     }
 
-    private void canGetOneBenefit(Product product, int quantity, Map<String, Integer> imsi) {
+    private void canGetOneBenefit(Product product, int quantity, Map<String, Integer> updateProductList) {
         quantity += 1;
-        imsi.put(product.getName(), quantity);
+        updateProductList.put(product.getName(), quantity);
     }
 
     private void checkPromotionOutOfStock(Product product, Promotion promotion, int quantity,
-                                         Map<String, Integer> imsi) {
+                                         Map<String, Integer> updateProductList) {
         String ans = getOutOfStockStatus(product, promotion, quantity);
-        if ("N".equals(ans)) {
+        if (ANSWER_NO.getMessage().equals(ans)) {
             int outOfStockCount = calculateOutOfStockCount(product, promotion, quantity);
             membershipDiscount += outOfStockCount * product.getPrice();
-            imsi.put(product.getName(), quantity - outOfStockCount);
+            updateProductList.put(product.getName(), quantity - outOfStockCount);
         }
     }
 
@@ -98,8 +100,6 @@ public class PromotionStockAlertService {
         int lessMok = Math.min(stockMok, orderMok);
         return quantity - (lessMok * sum);
     }
-
-
 
     public void updateBenefitProduct(Order order, Promotions promotions, Inventory inventory){
         updateProductList.forEach((productName, quantity) -> {

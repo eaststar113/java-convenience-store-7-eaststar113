@@ -1,12 +1,14 @@
 package store.controller;
 
+import static store.constants.ConstantMessage.ANSWER_YES;
+
 import java.io.IOException;
 import java.util.Objects;
 import store.util.Validate;
 import store.domain.Inventory;
 import store.domain.Order;
 import store.domain.Promotions;
-import store.service.PromotionStockAlertService;
+import store.service.PromotionService;
 import store.view.InPutView;
 import store.view.OutputView;
 
@@ -16,11 +18,10 @@ public class StoreController {
         Promotions promotions = displayPromotion();
         do{
             OutputView.displayProducts(inventory);
-
             Order order = retryOrder();
-            PromotionStockAlertService promotionStockAlertService = new PromotionStockAlertService(order,promotions,inventory);
-            OutputView.displayReceipt(promotionStockAlertService.getReceipt());
-        }while(Objects.equals(reOrder(), "Y"));
+            PromotionService promotionService = new PromotionService(order,promotions,inventory);
+            OutputView.displayReceipt(promotionService.getReceipt());
+        }while(Objects.equals(reOrder(), ANSWER_YES.getMessage()));
     }
 
     public static String reOrder() {
